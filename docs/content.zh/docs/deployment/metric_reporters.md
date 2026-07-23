@@ -336,6 +336,28 @@ metrics.reporter.otel.batch.size: 1500
 metrics.reporter.otel.export-completion-timeout-millis: 60000
 ```
 
+```yaml
+# 导出到需要认证的 OTLP 端点（例如 SaaS 后端或带认证代理的 collector）。
+# header 值遵循 OTEL_EXPORTER_OTLP_HEADERS 的规则：逗号分隔的 key=value 列表，
+# 值需要 percent 编码（空格为 %20，字面量 '+' 为 %2B）。
+# 该配置项的值在日志输出中会被脱敏。
+metrics.reporter.otel.factory.class: org.apache.flink.metrics.otel.OpenTelemetryMetricReporterFactory
+metrics.reporter.otel.exporter.endpoint: https://otlp.example.com/v1/metrics
+metrics.reporter.otel.exporter.protocol: HTTP
+metrics.reporter.otel.exporter.http-headers: Authorization=Basic%20dXNlcjpwYXNz,X-Custom-Header=value
+```
+
+```yaml
+# 使用私有 CA 的 TLS，可选配置 mTLS 客户端证书。
+# 路径必须在每个 JobManager 和 TaskManager 主机上可读。
+metrics.reporter.otel.factory.class: org.apache.flink.metrics.otel.OpenTelemetryMetricReporterFactory
+metrics.reporter.otel.exporter.endpoint: https://collector.internal:4317
+metrics.reporter.otel.exporter.protocol: gRPC
+metrics.reporter.otel.exporter.ssl.trusted-certificates: /etc/flink/tls/ca.pem
+metrics.reporter.otel.exporter.ssl.client-certificate: /etc/flink/tls/client.pem
+metrics.reporter.otel.exporter.ssl.client-key: /etc/flink/tls/client.key
+```
+
 <a name="slf4j"></a>
 
 ### Slf4j

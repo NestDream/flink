@@ -44,7 +44,9 @@ import java.util.function.BiConsumer;
 
 import static org.apache.flink.metrics.otel.OpenTelemetryReporterOptions.tryConfigureCompression;
 import static org.apache.flink.metrics.otel.OpenTelemetryReporterOptions.tryConfigureEndpoint;
+import static org.apache.flink.metrics.otel.OpenTelemetryReporterOptions.tryConfigureHeaders;
 import static org.apache.flink.metrics.otel.OpenTelemetryReporterOptions.tryConfigureTimeout;
+import static org.apache.flink.metrics.otel.OpenTelemetryReporterOptions.tryConfigureTls;
 
 /**
  * A Flink {@link EventReporter} which is made to export log records/events using Open Telemetry's
@@ -78,6 +80,11 @@ public class OpenTelemetryEventReporter extends OpenTelemetryReporterBase implem
                 tryConfigureEndpoint(metricConfig, httpBuilder::setEndpoint);
                 tryConfigureTimeout(metricConfig, httpBuilder::setTimeout);
                 tryConfigureCompression(metricConfig, httpBuilder::setCompression);
+                tryConfigureHeaders(metricConfig, httpBuilder::addHeader);
+                tryConfigureTls(
+                        metricConfig,
+                        httpBuilder::setTrustedCertificates,
+                        httpBuilder::setClientTls);
                 logRecordExporter = httpBuilder.build();
                 break;
             default:
@@ -90,6 +97,11 @@ public class OpenTelemetryEventReporter extends OpenTelemetryReporterBase implem
                 tryConfigureEndpoint(metricConfig, grpcBuilder::setEndpoint);
                 tryConfigureTimeout(metricConfig, grpcBuilder::setTimeout);
                 tryConfigureCompression(metricConfig, grpcBuilder::setCompression);
+                tryConfigureHeaders(metricConfig, grpcBuilder::addHeader);
+                tryConfigureTls(
+                        metricConfig,
+                        grpcBuilder::setTrustedCertificates,
+                        grpcBuilder::setClientTls);
                 logRecordExporter = grpcBuilder.build();
                 break;
         }

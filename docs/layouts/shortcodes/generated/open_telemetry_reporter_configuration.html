@@ -33,10 +33,34 @@
             <td>Endpoint for the OpenTelemetry Reporters.</td>
         </tr>
         <tr>
+            <td><h5>metrics.reporter.OpenTelemetry.exporter.http-headers</h5></td>
+            <td style="word-wrap: break-word;">(none)</td>
+            <td>String</td>
+            <td>Additional headers to attach to each OTLP export request, as a comma-separated list of key=value pairs following the W3C Baggage format used by OTEL_EXPORTER_OTLP_HEADERS. Values must be percent-encoded (e.g. a space is %20, a literal '+' is %2B). Entries with an empty value are ignored; for duplicate header names the last entry wins. Example: Authorization=Basic%20dXNlcjpwYXNz,X-Custom=value. Applies to both HTTP and gRPC exporters.</td>
+        </tr>
+        <tr>
             <td><h5>metrics.reporter.OpenTelemetry.exporter.protocol</h5></td>
             <td style="word-wrap: break-word;">gRPC</td>
             <td><p>Enum</p></td>
             <td>Protocol for the OpenTelemetry Reporters.<br /><br />Possible values:<ul><li>"gRPC"</li><li>"HTTP"</li></ul></td>
+        </tr>
+        <tr>
+            <td><h5>metrics.reporter.OpenTelemetry.exporter.ssl.client-certificate</h5></td>
+            <td style="word-wrap: break-word;">(none)</td>
+            <td>String</td>
+            <td>Path to a PEM file with the client certificate for mutual TLS towards the OTLP endpoint. Must be set together with exporter.ssl.client-key.</td>
+        </tr>
+        <tr>
+            <td><h5>metrics.reporter.OpenTelemetry.exporter.ssl.client-key</h5></td>
+            <td style="word-wrap: break-word;">(none)</td>
+            <td>String</td>
+            <td>Path to a PEM file (PKCS#8) with the client private key for mutual TLS towards the OTLP endpoint. Must be set together with exporter.ssl.client-certificate.</td>
+        </tr>
+        <tr>
+            <td><h5>metrics.reporter.OpenTelemetry.exporter.ssl.trusted-certificates</h5></td>
+            <td style="word-wrap: break-word;">(none)</td>
+            <td>String</td>
+            <td>Path to a PEM file with the certificates to trust for the OTLP endpoint (e.g. a private CA). When unset, the JVM default trust store is used. Applies to both HTTP and gRPC exporters.</td>
         </tr>
         <tr>
             <td><h5>metrics.reporter.OpenTelemetry.exporter.timeout</h5></td>

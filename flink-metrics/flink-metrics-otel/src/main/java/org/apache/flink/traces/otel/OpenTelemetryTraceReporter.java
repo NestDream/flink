@@ -45,7 +45,9 @@ import java.util.function.BiConsumer;
 
 import static org.apache.flink.metrics.otel.OpenTelemetryReporterOptions.tryConfigureCompression;
 import static org.apache.flink.metrics.otel.OpenTelemetryReporterOptions.tryConfigureEndpoint;
+import static org.apache.flink.metrics.otel.OpenTelemetryReporterOptions.tryConfigureHeaders;
 import static org.apache.flink.metrics.otel.OpenTelemetryReporterOptions.tryConfigureTimeout;
+import static org.apache.flink.metrics.otel.OpenTelemetryReporterOptions.tryConfigureTls;
 
 /**
  * A Flink {@link org.apache.flink.traces.reporter.TraceReporter} which is made to export spans
@@ -74,6 +76,11 @@ public class OpenTelemetryTraceReporter extends OpenTelemetryReporterBase implem
                 tryConfigureEndpoint(metricConfig, httpBuilder::setEndpoint);
                 tryConfigureTimeout(metricConfig, httpBuilder::setTimeout);
                 tryConfigureCompression(metricConfig, httpBuilder::setCompression);
+                tryConfigureHeaders(metricConfig, httpBuilder::addHeader);
+                tryConfigureTls(
+                        metricConfig,
+                        httpBuilder::setTrustedCertificates,
+                        httpBuilder::setClientTls);
                 spanExporter = httpBuilder.build();
                 break;
             default:
@@ -86,6 +93,11 @@ public class OpenTelemetryTraceReporter extends OpenTelemetryReporterBase implem
                 tryConfigureEndpoint(metricConfig, grpcBuilder::setEndpoint);
                 tryConfigureTimeout(metricConfig, grpcBuilder::setTimeout);
                 tryConfigureCompression(metricConfig, grpcBuilder::setCompression);
+                tryConfigureHeaders(metricConfig, grpcBuilder::addHeader);
+                tryConfigureTls(
+                        metricConfig,
+                        grpcBuilder::setTrustedCertificates,
+                        grpcBuilder::setClientTls);
                 spanExporter = grpcBuilder.build();
                 break;
         }

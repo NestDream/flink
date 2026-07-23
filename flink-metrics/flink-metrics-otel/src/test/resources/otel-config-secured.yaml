@@ -1,0 +1,79 @@
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Secured variant of otel-config.yaml: every receiver requires a bearer token
+# (header-based auth) and serves TLS; port 4319 additionally demands an mTLS
+# client certificate. Used by OpenTelemetrySecuredReporterITCase.
+
+extensions:
+  health_check:
+  bearertokenauth:
+    token: "itcase-secret-token"
+
+receivers:
+  otlp/grpc-auth-tls:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+        auth:
+          authenticator: bearertokenauth
+        tls:
+          cert_file: /tls/server.pem
+          key_file: /tls/server-key.pem
+  otlp/http-auth-tls:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318
+        auth:
+          authenticator: bearertokenauth
+        tls:
+          cert_file: /tls/server.pem
+          key_file: /tls/server-key.pem
+  otlp/grpc-mtls:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4319
+        tls:
+          cert_file: /tls/server.pem
+          key_file: /tls/server-key.pem
+          client_ca_file: /tls/ca.pem
+  otlp/http-mtls:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4320
+        tls:
+          cert_file: /tls/server.pem
+          key_file: /tls/server-key.pem
+          client_ca_file: /tls/ca.pem
+
+processors:
+  batch:
+
+exporters:
+  file:
+    path: /data/logs.json
+
+service:
+  pipelines:
+    metrics:
+      receivers: [otlp/grpc-auth-tls, otlp/http-auth-tls, otlp/grpc-mtls, otlp/http-mtls]
+      exporters: [file]
+    traces:
+      receivers: [otlp/grpc-auth-tls, otlp/http-auth-tls, otlp/grpc-mtls, otlp/http-mtls]
+      exporters: [file]
+    logs:
+      receivers: [otlp/grpc-auth-tls, otlp/http-auth-tls, otlp/grpc-mtls, otlp/http-mtls]
+      exporters: [file]
+  extensions: [health_check, bearertokenauth]

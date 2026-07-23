@@ -320,6 +320,29 @@ metrics.reporter.otel.batch.size: 1500
 metrics.reporter.otel.export-completion-timeout-millis: 60000
 ```
 
+```yaml
+# Exporting to an authenticated OTLP endpoint (e.g. a SaaS backend or a
+# collector behind an auth proxy). Header values follow the same rules as
+# OTEL_EXPORTER_OTLP_HEADERS: comma-separated key=value pairs with
+# percent-encoded values (a space is %20, a literal '+' is %2B).
+# The header list is redacted in logged configuration output.
+metrics.reporter.otel.factory.class: org.apache.flink.metrics.otel.OpenTelemetryMetricReporterFactory
+metrics.reporter.otel.exporter.endpoint: https://otlp.example.com/v1/metrics
+metrics.reporter.otel.exporter.protocol: HTTP
+metrics.reporter.otel.exporter.http-headers: Authorization=Basic%20dXNlcjpwYXNz,X-Custom-Header=value
+```
+
+```yaml
+# TLS against a private CA, optionally with a mutual-TLS client certificate.
+# Paths must be readable on every JobManager and TaskManager host.
+metrics.reporter.otel.factory.class: org.apache.flink.metrics.otel.OpenTelemetryMetricReporterFactory
+metrics.reporter.otel.exporter.endpoint: https://collector.internal:4317
+metrics.reporter.otel.exporter.protocol: gRPC
+metrics.reporter.otel.exporter.ssl.trusted-certificates: /etc/flink/tls/ca.pem
+metrics.reporter.otel.exporter.ssl.client-certificate: /etc/flink/tls/client.pem
+metrics.reporter.otel.exporter.ssl.client-key: /etc/flink/tls/client.key
+```
+
 ### Slf4j
 #### (org.apache.flink.metrics.slf4j.Slf4jReporter)
 
